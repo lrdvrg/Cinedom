@@ -77,7 +77,7 @@
     </header>
 
     <!-- Main Content -->
-    <div class="container">
+    <!-- <div class="container">
         <div class="row">
             <div class="col">
                 <div class="card" style="width: 20rem;">
@@ -110,9 +110,59 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+    <div class="container">
+        <div class="row">
+            <?php
+                require_once 'dbconfig.php';
 
-
+                $stmt = $DB_con->prepare('SELECT Peliculas_Id, Imagen, Nombre, Actores, Fecha_Estreno, Url FROM peliculas ORDER BY Fecha_Estreno DESC');
+                $stmt->execute();
+                
+                if($stmt->rowCount() > 0)
+                {
+                    while($row=$stmt->fetch(PDO::FETCH_ASSOC))
+                    {
+                        extract($row);
+            ?>
+                        <!-- <div class="col-xs-3">
+                            <p class="page-header"><?php echo $Nombre."&nbsp;/&nbsp;".$Nombre; ?></p>
+                            <img src="user_images/<?php echo $row['Imagen']; ?>" class="img-rounded" width="250px" height="250px" />
+                            <p class="page-header">
+                            <span>
+                            <a class="btn btn-info" href="editform.php?edit_id=<?php echo $row['userID']; ?>" title="click for edit" onclick="return confirm('sure to edit ?')"><span class="glyphicon glyphicon-edit"></span> Edit</a> 
+                            <a class="btn btn-danger" href="?delete_id=<?php echo $row['userID']; ?>" title="click for delete" onclick="return confirm('sure to delete ?')"><span class="glyphicon glyphicon-remove-circle"></span> Delete</a>
+                            </span>
+                            </p>
+                        </div>  -->
+                        <div class="col">
+                            <div class="card" style="width: 20rem;">
+                                <img class="card-img-top" src="posters/<?php echo $row['Imagen']; ?>" height="460" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?php echo $Nombre."&nbsp;"?> </h5>
+                                    <p class="card-text"> <strong>Cast</strong> <br><?php echo $Actores."&nbsp;"?><br> <strong>Fecha de Estreno</strong> <br><?php echo $Fecha_Estreno."&nbsp;"?></p>
+                                    <a href="<?php echo $Url."&nbsp;"?>" target="_blank" class="btn btn-outline-primary btn-block">Ver Trailer</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <?php
+                    }
+                }
+                else
+                {
+                        ?>
+                <div class="col-xs-12">
+                <div class="alert alert-warning">
+                    <span class="glyphicon glyphicon-info-sign"></span> &nbsp; No Data Found ...
+                    </div>
+                </div>
+                <?php
+                    }
+        
+                ?>
+        </div>
+    </div>  
     <!-- Footer -->
     <footer>
         <div class="container">

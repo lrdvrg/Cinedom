@@ -1,4 +1,73 @@
 <!DOCTYPE html>
+<?php
+error_reporting( ~E_NOTICE ); // avoid notice
+ require_once 'dbconfig.php';
+ 
+ if(isset($_POST['agregar']))
+ {
+  $Nombre = $_POST['name'];
+  $Actores = $_POST['cast'];
+  $Fecha_Estreno = $_POST['fecha'];
+  $Url = $_POST['url'];
+  
+  $imgFile = $_FILES['poster']['name'];
+  $tmp_dir = $_FILES['poster']['tmp_name'];
+  $imgSize = $_FILES['poster']['size'];
+
+  echo $_FILES['poster']['tmp_name'];
+
+
+   $upload_dir = 'posters/'; // upload directory
+ 
+   $imgExt = strtolower(pathinfo($imgFile,PATHINFO_EXTENSION)); // get image extension
+  
+   // valid image extensions
+   $valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); // valid extensions
+  
+   // rename uploading image
+   $poster = rand(1000,1000000).".".$imgExt;
+    
+   move_uploaded_file($tmp_dir,$upload_dir.$poster);
+
+   // allow valid image file formats
+   if(in_array($imgExt, $valid_extensions)){   
+    // Check file size '5MB'
+    if($imgSize < 5000000)    {
+     move_uploaded_file($tmp_dir,$upload_dir.$imgFile);
+    }
+    else{
+     $errMSG = "Sorry, your file is too large.";
+    }
+   }
+   else{
+    $errMSG = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";  
+   }
+
+  
+  
+  // if no error occured, continue ....
+  if(!isset($errMSG))
+  {
+   $stmt = $DB_con->prepare('INSERT INTO peliculas(Imagen,Nombre,Actores,Fecha_Estreno,Url) VALUES(:imagen, :nombre, :actores, :fecha, :link)');
+   $stmt->bindParam(':imagen',$poster);
+   $stmt->bindParam(':nombre',$Nombre);
+   $stmt->bindParam(':actores',$Actores);
+   $stmt->bindParam(':fecha',$Fecha_Estreno);
+   $stmt->bindParam(':link',$Url);
+   
+   if($stmt->execute())
+   {
+    $successMSG = "new record succesfully inserted ...";
+    header("refresh:5;index.php"); // redirects image view page after 5 seconds.
+   }
+   else
+   {
+    $errMSG = "error while inserting....";
+   }
+  }
+ }
+?>
+
 <html lang="en">
 
 <head>
@@ -75,39 +144,46 @@
                 <!-- Contact Form - Enter your email address on line 19 of the mail/contact_me.php file to make this form work. -->
                 <!-- WARNING: Some web hosts do not allow emails to be sent through forms to common mail hosts like Gmail or Yahoo. It's recommended that you use a private domain email address! -->
                 <!-- To use the contact form, your site must be on a live web host with PHP! The form will not work locally! -->
-                <form name="sentMessage" id="loginForm" novalidate>
+                <form name="sentMessage" id="loginForm" method="post" enctype="multipart/form-data" novalidate>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Nombre de la pelicula</label>
-                            <input type="text" class="form-control" placeholder="Nombre de la pelicula" id="movieName" required data-validation-required-message="Debe ingresar el nombre de la pelicula.">
+                            <input type="text" class="form-control" placeholder="Nombre de la pelicula" id="name" name="name" required data-validation-required-message="Debe ingresar el nombre de la pelicula.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Cast</label>
-                            <input type="text" class="form-control" placeholder="Actor principal" id="actor" required data-validation-required-message="Debe ingresar el nombre del actor principal.">
+                            <input type="text" class="form-control" placeholder="Cast" id="cast" name="cast" required data-validation-required-message="Debe ingresar el nombre del actor principal.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Fecha de estreno</label>
-                            <input type="date" class="form-control" placeholder="Fecha de estreno" id="fecha" required data-validation-required-message="Debe ingresar la fecha de estreno de la pelicula.">
+                            <input type="date" class="form-control" placeholder="Fecha de estreno" id="fecha" name="fecha" required data-validation-required-message="Debe ingresar la fecha de estreno de la pelicula.">
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label>URL del trailer</label>
+                            <input type="text" class="form-control" placeholder="Direccion del trailer en Youtube" id="url" name="url" required data-validation-required-message="Debe ingresar el link del trailer de la pelicula.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Poster</label>
-                            <input type="file" class="file" placeholder="Poster" id="poster" required data-validation-required-message="Debe ingresar alguna imagen como poster.">
+                            <input type="file" class="file" placeholder="Poster" id="poster" name="poster" accept="image/*" required data-validation-required-message="Debe ingresar alguna imagen como poster.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <br>
                     <div id="success"></div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-outline-primary" id="sendMessageButton">Agregar pelicula</button>
+                        <button type="submit" class="btn btn-outline-primary" id="agregar" name="agregar">Agregar pelicula</button>
                     </div>
                 </form>
             </div>
