@@ -34,6 +34,16 @@ $headers = "From: " . $nombre . "<" . $email . "> \r\n" .
 $envio = mail('Dahiangonzalez14@gmail.com', $asunto, $contenido, $headers);
 
 
+if($envio) {
+	$miresultado = '<h4>El correo ha sido enviado! Gracias por ponerse en contacto con nosotros.</h4>';
+	} else{
+	
+	$miresultado = '<h4>No se envío el correo.</h4>';
+	
+	}
+	
+	echo $miresultado;
+
 
 //reenviar correo a quien lo envio
 
@@ -71,5 +81,15 @@ $headers = "From: " . $nombreadmin . "<" . $correoadmin . "> \r\n" .
 
 // Enviar correo
 $envio = mail($email, $asunto, $contenido, $headers);
+
+if($envio) {
+	$miresultado = '<h4>El correo ha sido enviado! Gracias por ponerse en contacto con nosotros.</h4>';
+	} else{
+	
+	$miresultado = '<h4>No se envío el correo.</h4>';
+	
+	}
+	
+	echo $miresultado;
 
 
