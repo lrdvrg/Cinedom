@@ -25,14 +25,49 @@
 
 <body>
 
+<?php
+
+if(isset($_POST["submit"])){
+
+try{
+
+$base=new PDO("mysql:host=localhost; dbname=trailers", "root", "");
+
+$base->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$sql="SELECT * FROM usuarios WHERE Nombre_Usuario= :login AND Contrasena= :password";
+
+$resultado=$base->prepare($sql);
+
+$login=htmlentities(addslashes($_POST["login"]));
+
+$password=htmlentities(addslashes($_POST["password"]));
+
+$resultado->bindValue(":login", $login);
+
+$resultado->bindValue(":password", $password);
+
+$resultado->execute();
+
+$numero_registro=$resultado->rowCount();
+
+if($numero_registro!=0){
+     header("location:admin.php");
+}
+
+}catch (Exception $e) {
+ die("Error: ". $e-> getMessage());
+}
+}
+?>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-        
-                    Cinedom
-      </a>
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+             Cinedom
+            </a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         Menu
         <i class="fas fa-bars"></i>
       </button>
@@ -84,27 +119,37 @@
                 <!-- WARNING: Some web hosts do not allow emails to be sent through forms to common mail hosts like Gmail or Yahoo. It's recommended that you use a private domain email address! -->
                 <!-- To use the contact form, your site must be on a live web host with PHP! The form will not work locally! -->
                 <br>
-                <form name="sentMessage" id="loginForm" novalidate>
+                <form action="" method="post">
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Usuario</label>
-                            <input type="text" class="form-control" placeholder="Usuario" id="username" required data-validation-required-message="Debe ingresar su nombre de usuario.">
+                            <input type="text" class="form-control" placeholder="Usuario" name="login" id="login" required data-validation-required-message="Debe ingresar su nombre de usuario.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Contraseña</label>
-                            <input type="password" class="form-control" placeholder="Contraseña" id="password" required data-validation-required-message="Debe ingresar su contraseña.">
+                            <input type="password" class="form-control" placeholder="Contraseña" name="password" id="password"  required data-validation-required-message="Debe ingresar su contraseña.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <br>
                     <div id="success"></div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-outline-primary btn-block" id="sendMessageButton">Iniciar sesion</button>
+                        <button type="submit" class="btn btn-outline-primary btn-block" name="submit">Iniciar sesion</button>
                     </div>
                 </form>
+
+                <?php  
+
+                if(isset($_POST["submit"])){
+                    if($numero_registro==0){
+                        echo '<div class="alert alert-danger" role="alert">El usuario o contraseña ingresado esta equivocado... </div>';
+                    }
+                }
+                ?>
+
                 <p>¿No tienes una cuenta? <a href="registro.php" class="card-link">Registrate pulsando aqui</a></p>
             </div>
         </div>
