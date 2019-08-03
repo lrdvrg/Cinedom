@@ -86,10 +86,10 @@
                 <p>info@cinedom.com</p>
                 <h6>Redes</h6>
                 <div class="iconos-sociales">
-                    <a href="facebook.com" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://2.bp.blogspot.com/-28mh2hZK3HE/XCrIxxSCW0I/AAAAAAAAH_M/XniFGT5c2lsaVNgf7UTbPufVmIkBPnWQQCLcBGAs/s1600/facebook.png" title="Sígueme en Facebook" /></a>
-                    <a href="instagram.com" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://4.bp.blogspot.com/-Ilxti1UuUuI/XCrIy6hBAcI/AAAAAAAAH_k/QV5KbuB9p3QB064J08W2v-YRiuslTZnLgCLcBGAs/s1600/instagram.png" title="Sígueme en Facebook" /></a>
-                    <a href="twitter.com" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://3.bp.blogspot.com/-E4jytrbmLbY/XCrI2Xd_hUI/AAAAAAAAIAo/qXt-bJg1UpMZmTjCJymxWEOGXWEQ2mv3ACLcBGAs/s1600/twitter.png" title="Sígueme en Facebook" /></a>
-                    <a href="youtube.com" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://1.bp.blogspot.com/-CUKx1kAd-ls/XCrI4UAvNqI/AAAAAAAAIBI/-i1neUt8kZwP6YOsFOXX5p0Bnqa29m-JgCLcBGAs/s1600/youtube2.png" title="Sígueme en Facebook" /></a>
+                    <a href="https://www.facebook.com/" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://2.bp.blogspot.com/-28mh2hZK3HE/XCrIxxSCW0I/AAAAAAAAH_M/XniFGT5c2lsaVNgf7UTbPufVmIkBPnWQQCLcBGAs/s1600/facebook.png" title="Sígueme en Facebook" /></a>
+                    <a href="https://www.instagram.com/" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://4.bp.blogspot.com/-Ilxti1UuUuI/XCrIy6hBAcI/AAAAAAAAH_k/QV5KbuB9p3QB064J08W2v-YRiuslTZnLgCLcBGAs/s1600/instagram.png" title="Sígueme en Facebook" /></a>
+                    <a href="https://twitter.com/" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://3.bp.blogspot.com/-E4jytrbmLbY/XCrI2Xd_hUI/AAAAAAAAIAo/qXt-bJg1UpMZmTjCJymxWEOGXWEQ2mv3ACLcBGAs/s1600/twitter.png" title="Sígueme en Facebook" /></a>
+                    <a href="https://www.youtube.com/" target="_blank"><img alt="Sígueme en Facebook" height="40" width="40" src="https://1.bp.blogspot.com/-CUKx1kAd-ls/XCrI4UAvNqI/AAAAAAAAIBI/-i1neUt8kZwP6YOsFOXX5p0Bnqa29m-JgCLcBGAs/s1600/youtube2.png" title="Sígueme en Facebook" /></a>
                 </div>
 
                 <style>
@@ -109,39 +109,40 @@
                 <!-- Contact Form - Enter your email address on line 19 of the mail/contact_me.php file to make this form work. -->
                 <!-- WARNING: Some web hosts do not allow emails to be sent through forms to common mail hosts like Gmail or Yahoo. It's recommended that you use a private domain email address! -->
                 <!-- To use the contact form, your site must be on a live web host with PHP! The form will not work locally! -->
-                <form name="sentMessage" id="contactForm" novalidate>
+                <form  method="POST" name="sentMessage" id="formulario" role="form" novalidate>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Nombre</label>
-                            <input type="text" class="form-control" placeholder="Nombre" id="name" required data-validation-required-message="Debe ingresar su nombre.">
+                            <input name="name" type="text" class="form-control" placeholder="Nombre" id="name" required data-validation-required-message="Debe ingresar su nombre.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Email</label>
-                            <input type="email" class="form-control" placeholder="Email" id="email" required data-validation-required-message="Debe ingresar su email.">
+                            <input name="email" type="email" class="form-control" placeholder="Email" id="email" required data-validation-required-message="Debe ingresar su email.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group col-xs-12 floating-label-form-group controls">
                             <label>Numero de telefono</label>
-                            <input type="tel" class="form-control" placeholder="Numero de telefono" id="phone" required data-validation-required-message="Debe ingresar su telefono.">
+                            <input name="phone" type="tel" class="form-control" placeholder="Numero de telefono" id="phone" required data-validation-required-message="Debe ingresar su telefono.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Mensaje</label>
-                            <textarea rows="5" class="form-control" placeholder="Mensaje" id="message" required data-validation-required-message="Debe escribir su mensaje."></textarea>
+                            <textarea name="message" rows="5" class="form-control" placeholder="Mensaje" id="message" required data-validation-required-message="Debe escribir su mensaje."></textarea>
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <br>
                     <div id="success"></div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-outline-primary btn-block" id="sendMessageButton">Enviar</button>
+                        <input type="submit" class="btn btn-outline-primary btn-block" id="sendMessageButton" value="Enviar">
+                        <!-- <button type="submit" class="btn btn-outline-primary btn-block" id="sendMessageButton">Enviar</button> -->
                     </div>
                 </form>
             </div>
@@ -177,20 +178,3 @@
 
 </html>
 
-</html>
-
-</html>
-
-</html>
-
-</html>
-
-</html>
-
-</html>
-
-</html>
-
-</html>
-
-</html>
