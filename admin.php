@@ -1,4 +1,24 @@
 <!DOCTYPE html>
+<?php
+    require_once 'dbconfig.php';
+
+    if(isset($_GET['delete_id'])){
+        header("admin.php");
+        // BORRAR LA IMAGEN DE LA BBDD
+        $stmt_select = $DB_con->prepare('SELECT Imagen FROM peliculas WHERE Peliculas_Id =:uid');
+        $stmt_select->execute(array(':uid'=>$_GET['delete_id']));
+        $imgRow=$stmt_select->fetch(PDO::FETCH_ASSOC);
+        unlink("posters/".$imgRow['Imagen']);
+        
+        // BORRAR LA PELICULA EN SI
+        $stmt_delete = $DB_con->prepare('DELETE FROM peliculas WHERE Peliculas_Id =:uid');
+        $stmt_delete->bindParam(':uid',$_GET['delete_id']);
+        $stmt_delete->execute();
+
+        
+    
+    }
+ ?>
 <html lang="en">
 
 <head>
@@ -73,56 +93,52 @@
     <hr>
     <!-- Main Content -->
     <div class="container">
-
         <div class="row">
-            <div class="col">
-                <div class="card" style="width: 20rem;">
-                    <div class="card-header">
-                        <button onclick="location.href='modificar.php'" type="button" class="btn btn-outline-success" href="modificar.php ">Modificar</button>
-                        <button type="button" class="btn btn-outline-danger" href="eliminar.php">Eliminar</button>
-                    </div>
-                    <img class="card-img-top" src="https://i1.wp.com/teaser-trailer.com/wp-content/uploads/John-Wick-3-Parabellum-French-Poster.jpg" height="460" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title">John Wick 3 </h5>
-                        <p class="card-text"> <strong>Cast</strong> <br> Keanu Reeves, Halle Berry, Asia Kate Dillon, Ian McShane, Mark Dacasos, Laurence Fishburne, Anjelica Huston<br> <strong>Fecha de Estreno</strong> <br> 15/05/2019</p>
-                        <a href="#" class="btn btn-outline-primary btn-block">Ver Trailer</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 20rem;">
-                    <div class="card-header">
-                        <button onclick="location.href='modificar.php'" type="button" class="btn btn-outline-success" href="modificar.php ">Modificar</button>
-                        <button type="button" class="btn btn-outline-danger" href="eliminar.php">Eliminar</button>
-                    </div>
-                    <img class="card-img-top" src="http://www.shockya.com/news/wp-content/uploads/disney-a-wrinkle-in-time-movie-poster.jpg" height="460" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title">A wrinkle in time</h5>
-                        <p class="card-text"><strong>Cast</strong> <br> Oprah Winfrey, Strom Reid, Reese Witherspoon, Mindy Laing, Chris Pine, Levi Miller, Zach Galifianakis <br> <strong>Fecha de Estreno</strong> <br> 22/04/2018</p>
-                        <a href="#" class="btn btn-outline-primary btn-block">Ver Trailer</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card" style="width: 20rem;">
-                    <div class="card-header">
-                        <button onclick="location.href='modificar.php'" type="button" class="btn btn-outline-success" href="modificar.php ">Modificar</button>
-                        <button type="button " class="btn btn-outline-danger ">Eliminar</button>
-                    </div>
-                    <img class="card-img-top " src="https://images-na.ssl-images-amazon.com/images/I/A1GdxURr%2BuL._SY679_.jpg " height="460 " alt="Card image cap ">
-                    <div class="card-body ">
-                        <h5 class="card-title ">Sicario</h5>
-                        <p class="card-text "><strong>Cast</strong><br> Hector Bonilla, Josh Brolin, Emily Blunt, Jeffrey Donovan, Jon Bernthal, Daniel Kaluuya, Raoul Trujillo, Victor Garber <br><strong>Fecha de Estreno</strong><br> 23/07/2018</p>
-                        <a href="# " class="btn btn-outline-primary btn-block ">Ver Trailer</a>
-                    </div>
 
-                </div>
-            </div>
+            <?php
+                require_once 'dbconfig.php';
 
+                $stmt = $DB_con->prepare('SELECT Peliculas_Id, Imagen, Nombre, Actores, Fecha_Estreno, Url FROM peliculas ORDER BY Fecha_Estreno DESC');
+                $stmt->execute();
+                
+                if($stmt->rowCount() > 0)
+                {
+                    while($row=$stmt->fetch(PDO::FETCH_ASSOC))
+                    {
+                        extract($row);
+            ?>
+                        <div class="col">
+                            <div class="card" style="width: 20rem;">
+                                <div class="card-header">
+                                    <button onclick="location.href='modificar.php'" type="button" class="btn btn-outline-success" href="modificar.php ">Modificar</button>
+                                    <a type="button" class="btn btn-outline-danger" href="?delete_id=<?php echo $row['Peliculas_Id']; ?>">Eliminar</a>
+                                </div>
+                                <img class="card-img-top" src="posters/<?php echo $row['Imagen']; ?>" height="460" alt="Card image cap">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?php echo $Nombre."&nbsp;"?></h5>
+                                    <p class="card-text"> <strong>Cast</strong> <br> <?php echo $Actores."&nbsp;"?><br> <strong>Fecha de Estreno</strong> <br><?php echo $Fecha_Estreno."&nbsp;"?></p>
+                                    <a href="<?php echo $Url."&nbsp;"?>" target="_blank" class="btn btn-outline-primary btn-block">Ver Trailer</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <?php
+                    }
+                }
+                else
+                {
+                        ?>
+                <div class="col-xs-12">
+                    <div class="alert alert-warning">
+                        <span class="glyphicon glyphicon-info-sign"></span> &nbsp; No se han registrados peliculas, agregue una e intente de nuevo...
+                    </div>
+                </div>
+                <?php
+                    }
+        
+                ?>
         </div>
-
     </div>
-
 
     <!-- Footer -->
     <footer>
@@ -146,3 +162,4 @@
 </body>
 
 </html>
+

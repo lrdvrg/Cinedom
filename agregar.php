@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-error_reporting( ~E_NOTICE ); // avoid notice
+error_reporting( ~E_NOTICE );
  require_once 'dbconfig.php';
  
  if(isset($_POST['agregar']))
@@ -14,38 +14,27 @@ error_reporting( ~E_NOTICE ); // avoid notice
   $tmp_dir = $_FILES['poster']['tmp_name'];
   $imgSize = $_FILES['poster']['size'];
 
-  echo $_FILES['poster']['tmp_name'];
-
-
-   $upload_dir = 'posters/'; // upload directory
+   $upload_dir = 'posters/';
  
-   $imgExt = strtolower(pathinfo($imgFile,PATHINFO_EXTENSION)); // get image extension
+   $imgExt = strtolower(pathinfo($imgFile,PATHINFO_EXTENSION)); 
   
-   // valid image extensions
-   $valid_extensions = array('jpeg', 'jpg', 'png', 'gif'); // valid extensions
+   $valid_extensions = array('jpeg', 'jpg', 'png', 'gif');
   
-   // rename uploading image
    $poster = rand(1000,1000000).".".$imgExt;
     
-   move_uploaded_file($tmp_dir,$upload_dir.$poster);
-
-   // allow valid image file formats
    if(in_array($imgExt, $valid_extensions)){   
-    // Check file size '5MB'
+
     if($imgSize < 5000000)    {
-     move_uploaded_file($tmp_dir,$upload_dir.$imgFile);
+     move_uploaded_file($tmp_dir,$upload_dir.$poster);
     }
     else{
-     $errMSG = "Sorry, your file is too large.";
+     $errMSG = "El peso del archivo excede el limite maximo.";
     }
    }
    else{
-    $errMSG = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";  
+    $errMSG = "El tipo de archivo no es el correcto, intente de nuevo.";  
    }
 
-  
-  
-  // if no error occured, continue ....
   if(!isset($errMSG))
   {
    $stmt = $DB_con->prepare('INSERT INTO peliculas(Imagen,Nombre,Actores,Fecha_Estreno,Url) VALUES(:imagen, :nombre, :actores, :fecha, :link)');
@@ -57,8 +46,9 @@ error_reporting( ~E_NOTICE ); // avoid notice
    
    if($stmt->execute())
    {
-    $successMSG = "new record succesfully inserted ...";
-    header("refresh:5;index.php"); // redirects image view page after 5 seconds.
+    $successMSG = "Se ha ingresado correctamente ...";
+    //EL REFRESH: SIRVE PARA REDIRIGIR EN 5 SEGUNDOS...
+    header("refresh:2;admin.php");
    }
    else
    {
@@ -141,9 +131,13 @@ error_reporting( ~E_NOTICE ); // avoid notice
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-6 mx-auto">
-                <!-- Contact Form - Enter your email address on line 19 of the mail/contact_me.php file to make this form work. -->
-                <!-- WARNING: Some web hosts do not allow emails to be sent through forms to common mail hosts like Gmail or Yahoo. It's recommended that you use a private domain email address! -->
-                <!-- To use the contact form, your site must be on a live web host with PHP! The form will not work locally! -->
+                <?php 
+                    if(isset($_POST["agregar"])){
+                        echo '<div class="alert alert-success" role="alert">¡La pelicula ha sido correctamente agregada!</div>';
+
+                    }
+                ?>
+
                 <form name="sentMessage" id="loginForm" method="post" enctype="multipart/form-data" novalidate>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
@@ -189,8 +183,6 @@ error_reporting( ~E_NOTICE ); // avoid notice
             </div>
         </div>
     </div>
-
-
 
     <!-- Footer -->
     <footer>
