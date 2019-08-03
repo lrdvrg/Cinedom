@@ -73,4 +73,3 @@ $headers = "From: " . $nombreadmin . "<" . $correoadmin . "> \r\n" .
 $envio = mail($email, $asunto, $contenido, $headers);
 
 
-
