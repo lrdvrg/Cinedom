@@ -110,8 +110,8 @@
                         <div class="col">
                             <div class="card" style="width: 20rem;">
                                 <div class="card-header">
-                                    <button onclick="location.href='modificar.php'" type="button" class="btn btn-outline-success" href="modificar.php ">Modificar</button>
-                                    <a type="button" class="btn btn-outline-danger" href="?delete_id=<?php echo $row['Peliculas_Id']; ?>">Eliminar</a>
+                                <button onclick="location.href='modificar.php?edit_id=<?php echo $row['Peliculas_Id']; ?>'" type="button" class="btn btn-outline-success" href="modificar.php">Modificar</button>
+                                <button onclick="location.href='?delete_id=<?php echo $row['Peliculas_Id']; ?>'" type="button" class="btn btn-outline-danger">Eliminar</button>
                                 </div>
                                 <img class="card-img-top" src="posters/<?php echo $row['Imagen']; ?>" height="460" alt="Card image cap">
                                 <div class="card-body">

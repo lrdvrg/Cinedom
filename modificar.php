@@ -1,4 +1,82 @@
 <!DOCTYPE html>
+<?php
+    error_reporting( ~E_NOTICE );
+    require_once 'dbconfig.php';
+
+    if(isset($_GET['edit_id']) && !empty($_GET['edit_id']))
+    {
+        $id = $_GET['edit_id'];
+        $stmt_edit = $DB_con->prepare('SELECT Imagen, Nombre, Actores, Fecha_Estreno, Url  FROM peliculas WHERE Peliculas_Id =:uid');
+        $stmt_edit->execute(array(':uid'=>$id));
+        $edit_row = $stmt_edit->fetch(PDO::FETCH_ASSOC);
+        extract($edit_row);
+    }
+    else
+    {
+        header("Location: admin.php");
+    }
+
+    if(isset($_POST['modificar']))
+    {
+        $Nombre = $_POST['name'];
+        $Actores = $_POST['cast'];
+        $Fecha_Estreno = $_POST['fecha'];
+        $Url = $_POST['url'];
+        
+        $imgFile = $_FILES['poster']['name'];
+        $tmp_dir = $_FILES['poster']['tmp_name'];
+        $imgSize = $_FILES['poster']['size'];
+
+            
+        if($imgFile)
+        {
+            $upload_dir = 'poster/';
+            $imgExt = strtolower(pathinfo($imgFile,PATHINFO_EXTENSION));
+            $valid_extensions = array('jpeg', 'jpg', 'png', 'gif');
+            $userpic = rand(1000,1000000).".".$imgExt;
+            if(in_array($imgExt, $valid_extensions))
+            {   
+            if($imgSize < 5000000)
+            {
+                unlink($upload_dir.$edit_row['Imagen']);
+                move_uploaded_file($tmp_dir,$upload_dir.$userpic);
+            }
+            else
+            {
+                $errMSG = "Sorry, your file is too large it should be less then 5MB";
+            }
+            }
+            else
+            {
+                $errMSG = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";  
+            } 
+            }
+        else
+        {
+            $userpic = $edit_row['Imagen'];
+        } 
+        
+    
+        if(!isset($errMSG))
+        {
+            $stmt = $DB_con->prepare('UPDATE peliculas SET Nombre=:nombre, Actores=:cast,  Imagen=:imagen, Fecha_Estreno=:fecha, Url=:url WHERE Peliculas_Id=:uid');
+            $stmt->bindParam(':nombre',$Nombre);
+            $stmt->bindParam(':cast',$Actores);
+            $stmt->bindParam(':imagen',$userpic);
+            $stmt->bindParam(':fecha',$Fecha_Estreno);
+            $stmt->bindParam(':url',$Url);
+            $stmt->bindParam(':uid',$id);
+            
+            if($stmt->execute()){
+            
+                header("refresh:2;admin.php");
+            }
+            else{
+                $errMSG = "No se pudo actualizar";
+            }
+        }    
+    }
+  ?>
 <html lang="en">
 
 <head>
@@ -71,42 +149,53 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-6 mx-auto">
-                <!-- Contact Form - Enter your email address on line 19 of the mail/contact_me.php file to make this form work. -->
-                <!-- WARNING: Some web hosts do not allow emails to be sent through forms to common mail hosts like Gmail or Yahoo. It's recommended that you use a private domain email address! -->
-                <!-- To use the contact form, your site must be on a live web host with PHP! The form will not work locally! -->
-                <form name="sentMessage" id="loginForm" novalidate>
+                <?php 
+                    if(isset($_POST["modificar"])){
+                        echo '<div class="alert alert-success" role="alert">¡La pelicula ha sido correctamente modificada!</div>';
+
+                    }
+                ?>
+
+                <form name="sentMessage" id="loginForm" method="post" enctype="multipart/form-data" novalidate>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Nombre de la pelicula</label>
-                            <input type="text" class="form-control" placeholder="Nombre de la pelicula" id="movieName" required data-validation-required-message="Debe ingresar el nombre de la pelicula.">
+                            <input type="text" class="form-control" placeholder="Nombre de la pelicula" id="name" name="name" value="<?php echo $Nombre."&nbsp;"?>" required data-validation-required-message="Debe ingresar el nombre de la pelicula.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
-                            <label>Actor principal</label>
-                            <input type="text" class="form-control" placeholder="Actor principal" id="actor" required data-validation-required-message="Debe ingresar el nombre del actor principal.">
+                            <label>Cast</label>
+                            <input type="text" class="form-control" placeholder="Cast" id="cast" name="cast" value="<?php echo $Actores."&nbsp;"?>" required data-validation-required-message="Debe ingresar el nombre del actor principal.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Fecha de estreno</label>
-                            <input type="date" class="form-control" placeholder="Fecha de estreno" id="fecha" required data-validation-required-message="Debe ingresar la fecha de estreno de la pelicula.">
+                            <input type="date" class="form-control" placeholder="Fecha de estreno" id="fecha" name="fecha" value="<?php echo $Fecha_Estreno."&nbsp;"?>" required data-validation-required-message="Debe ingresar la fecha de estreno de la pelicula.">
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label>URL del trailer</label>
+                            <input type="text" class="form-control" placeholder="Direccion del trailer en Youtube" id="url" name="url" value="<?php echo $Url."&nbsp;"?>" required data-validation-required-message="Debe ingresar el link del trailer de la pelicula.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
                             <label>Poster</label>
-                            <input type="file" class="file" placeholder="Poster" id="poster" required data-validation-required-message="Debe ingresar alguna imagen como poster.">
+                            <input type="file" class="file" placeholder="Poster" id="poster" name="poster" accept="image/*" required data-validation-required-message="Debe ingresar alguna imagen como poster.">
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
                     <br>
                     <div id="success"></div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-outline-primary" id="sendMessageButton">modificar pelicula</button>
+                        <button type="submit" class="btn btn-outline-primary" id="modificar" name="modificar">Modificar pelicula</button>
                     </div>
                 </form>
             </div>
